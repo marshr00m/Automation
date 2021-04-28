@@ -1,16 +1,25 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
-import time, config
+import time, datetime, config
 
 # Import arguments from config.py file
 email = config.EMAIL_ADDRESS
 passwd = config.PASSWORD
 url = config.URL
-subject = config.SUBJECT
+subject = config.SUBJECT_NAME
 
-# Class session length
-length = 60 * 90
+########################################################################
+########################################################################
+####                        Configuration                           ####
+########################################################################
+########################################################################
+
+# Class session length (minute)
+length = 90
+
+# Session leave count down timer (before min)
+cnt = 5
 
 # Define locations
 driver_location = ".\chromedriver.exe"
@@ -35,6 +44,8 @@ opt.add_experimental_option("prefs", { \
     "profile.default_content_setting_values.geolocation": 2,
     "profile.default_content_setting_values.notifications": 2
   })
+########################################################################
+########################################################################
 
 #Launch chrome
 driver = webdriver.Chrome(options=opt)
@@ -53,8 +64,11 @@ def meetJoin(target_url):
     driver.execute_script("window.open('about:blank','second_tab');")
     driver.switch_to.window("second_tab")
     driver.get(target_url)
+    #print(driver.find_element_by_xpath("/html/body").text)
+    time.sleep(3)
     driver.find_element_by_xpath(
         '//*[@id="yDmH0d"]/div[3]/div/div[2]/div[3]/div/span/span').click()
+    time.sleep(1)
     driver.find_element_by_xpath(
     '//*[@id="yDmH0d"]/c-wiz/div/div/div[9]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/div/div[1]/div[1]/span/span'
     ).click()
@@ -70,19 +84,28 @@ def login():
     ).send_keys(passwd + "n")
 
 # Execute
-#session_url = classroom(subject)
-#meetJoin(session_url)
+session_url = classroom(subject)
+meetJoin(session_url)
 
 #Timer
 joined_time = time.time()
 sec_time = time.time() - joined_time
-print("Joined at: " + str(joined_time))
+print("Joined at: " + str(datetime.datetime.now()))
 while True:
+    time.sleep(1)
     ela_time = time.time() - joined_time
-    if ela_time > sec_time + 1:
-        print('{:.0f}'.format(ela_time))
+    if ela_time > sec_time + 60:
+        print('{:.0f}'.format(ela_time) + " min passed")
         sec_time = ela_time
-    if ela_time > length:
+    if ela_time > (length - cnt) * 60:
+        print(cnt + " min to quit")
+        cnt -= 1
+    if ela_time > length * 60:
+        print(str(length) + " min timer reached")
+        print("Quitting process...")
+        driver.find_element_by_xpath(
+            '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[9]/div[2]/div[2]/div'
+        ).click()
+        time.sleep(3)
         driver.quit()
         break
-    time.sleep(1)
