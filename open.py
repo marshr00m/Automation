@@ -47,7 +47,7 @@ opt.add_experimental_option("prefs", { \
 ########################################################################
 ########################################################################
 
-#Launch chrome
+# Launch chrome
 driver = webdriver.Chrome(options=opt)
 driver.implicitly_wait(10)
 
@@ -73,7 +73,7 @@ def meetJoin(target_url):
     '//*[@id="yDmH0d"]/c-wiz/div/div/div[9]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/div/div[1]/div[1]/span/span'
     ).click()
 
-# If you have to login Google Account
+# If you have to login to the Google Account
 def login():
     driver.get(login_url)
     driver.find_element_by_xpath(
@@ -84,10 +84,11 @@ def login():
     ).send_keys(passwd + "n")
 
 # Execute
+#login()
 session_url = classroom(subject)
 meetJoin(session_url)
 
-#Timer
+# Timer
 joined_time = time.time()
 sec_time = time.time() - joined_time
 print("Joined at: " + str(datetime.datetime.now()))
