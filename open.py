@@ -16,7 +16,7 @@ subject = config.SUBJECT_NAME
 ########################################################################
 
 # Class session length (minute)
-length = 1
+length = 90
 
 # Session leave count down timer (before min)
 cnt = 5
