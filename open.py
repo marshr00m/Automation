@@ -81,7 +81,7 @@ def login():
     ).send_keys(email + "\n")
     driver.find_element_by_xpath(
         '//*[@id="password"]/div[1]/div/div[1]/input'
-    ).send_keys(passwd + "n")
+    ).send_keys(passwd + "\n")
 
 # Execute
 #login()
@@ -90,16 +90,16 @@ meetJoin(session_url)
 
 # Timer
 joined_time = time.time()
-sec_time = time.time() - joined_time
+min_time = time.time() - joined_time
 print("Joined at: " + str(datetime.datetime.now()))
 while True:
     time.sleep(1)
     ela_time = time.time() - joined_time
-    if ela_time > sec_time + 60:
+    if ela_time > min_time + 60:
         print('{:.0f}'.format(ela_time) + " min passed")
         sec_time = ela_time
     if ela_time > (length - cnt) * 60:
-        print(cnt + " min to quit")
+        print(str(cnt) + " min to quit")
         cnt -= 1
     if ela_time > length * 60:
         print(str(length) + " min timer reached")
