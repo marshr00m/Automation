@@ -18,9 +18,6 @@ subject = config.SUBJECT_NAME
 # Class session length (minute)
 length = 90
 
-# Session leave count down timer (before min)
-cnt = 5
-
 # Define locations
 driver_location = ".\chromedriver.exe"
 profile_path = "C:\\ChromeProfiles\\Automation"
@@ -43,28 +40,35 @@ opt.add_experimental_option("prefs", { \
     "profile.default_content_setting_values.media_stream_camera": 2,
     "profile.default_content_setting_values.geolocation": 2,
     "profile.default_content_setting_values.notifications": 2
-  })
+})
 ########################################################################
 ########################################################################
 
 # Launch chrome
 driver = webdriver.Chrome(options=opt)
-driver.implicitly_wait(10)
+driver.implicitly_wait(30)
+
 
 # Move to objective website
 def classroom(sub):
+    sysmessage("Opening Google Classroom...")
     driver.get(url)
+    sysmessage("Searching the classrooms for [ " + sub + " ]...")
     driver.find_element_by_partial_link_text(sub).click()
+    sysmessage("Found a classroom named [ " + driver.find_element_by_partial_link_text(sub).text.replace("\n", " ") + " ].")
+
     meet_url = driver.find_element_by_partial_link_text("meet.google.com").text
+    sysmessage()
     print("Target Google Meet URL: " + meet_url)
     return meet_url
+
 
 # Join Google Meet session
 def meetJoin(target_url):
     driver.execute_script("window.open('about:blank','second_tab');")
     driver.switch_to.window("second_tab")
     driver.get(target_url)
-    #print(driver.find_element_by_xpath("/html/body").text)
+    # print(driver.find_element_by_xpath("/html/body").text)
     time.sleep(3)
     driver.find_element_by_xpath(
         '//*[@id="yDmH0d"]/div[3]/div/div[2]/div[3]/div/span/span').click()
@@ -72,6 +76,10 @@ def meetJoin(target_url):
     driver.find_element_by_xpath(
         '//*[@id="yDmH0d"]/c-wiz/div/div/div[9]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/div/div[1]/div[1]/span/span'
     ).click()
+    end_date = datetime.datetime.now() + datetime.timedelta(minutes=length)
+    sysmessage()
+    print("Joined the class. End time will be " + end_date.strftime("%Y/%m/%d %H:%M:%S"))
+
 
 # If you have to login to the Google Account
 def login():
@@ -83,35 +91,35 @@ def login():
         '//*[@id="password"]/div[1]/div/div[1]/input'
     ).send_keys(passwd + "\n")
 
-def timestamp():
+
+def sysmessage(text_message=""):
     print("[" + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S") + "] ", end="")
+    if text_message != "":
+        print(text_message)
+
 
 # Execute
-#login()
+# login()
 session_url = classroom(subject)
-meetJoin(session_url)
+#meetJoin(session_url)
+
 
 # Timer
-if cnt > length:
-    cnt = length
 joined_time = time.time()
 sec_time = time.time() - joined_time
-end_date = datetime.datetime.now() + datetime.timedelta(minutes=length)
-timestamp()
-print("Joined the class. End time will be " + end_date.strftime("%Y/%m/%d %H:%M:%S"))
+
 while True:
     time.sleep(1)
     ela_time = time.time() - joined_time
     if ela_time > sec_time + 60:
         min = ela_time / 60
-        timestamp()
-        print('{:.0f}'.format(min) + " min passed, " + str(round(length - min)) + " min to quit")
+        sysmessage()
+        print('{:.0f}'.format(min) + "/" + str(length) + " min passed, " + str(round(length - min)) + " min to quit")
         sec_time = ela_time
     if ela_time > length * 60:
-        timestamp()
+        sysmessage()
         print(str(length) + " min timer reached")
-        timestamp()
-        print("Quitting process...")
+        sysmessage("Quitting process...")
         driver.find_element_by_xpath(
             '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[9]/div[2]/div[2]/div'
         ).click()
