@@ -7,13 +7,13 @@ Example:
 
 ---
 
-EMAIL_ADDRESS = " { your email address } "
+EMAIL_ADDRESS = "{ your email address }"
 
-PASSWORD = " { your account password } "
+PASSWORD = "{ your account password }"
 
-URL = " { classroom address } "
+URL = "{ classroom address }"
 
-SUBJECT_NAME = " { partial or full subject name } "
+SUBJECT_NAME = "{ partial or full subject name }"
 
 ---
 
