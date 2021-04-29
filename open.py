@@ -1,13 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
-import time, datetime, config
+import time, datetime, sys, config
 
 # Import arguments from config.py file
 email = config.EMAIL_ADDRESS
 passwd = config.PASSWORD
 url = config.URL
-subject = config.SUBJECT_NAME
+#subject = config.SUBJECT_NAME
+
+#Import arguments from argv
+subject = sys.argv[1]
 
 ########################################################################
 ########################################################################
@@ -16,7 +19,7 @@ subject = config.SUBJECT_NAME
 ########################################################################
 
 # Class session length (minute)
-length = 90
+length = 92
 
 # Define locations
 driver_location = ".\chromedriver.exe"
@@ -101,7 +104,7 @@ def sysmessage(text_message=""):
 # Execute
 # login()
 session_url = classroom(subject)
-#meetJoin(session_url)
+meetJoin(session_url)
 
 
 # Timer
