@@ -16,7 +16,7 @@ subject = config.SUBJECT_NAME
 ########################################################################
 
 # Class session length (minute)
-length = 90
+length = 1
 
 # Session leave count down timer (before min)
 cnt = 5
@@ -70,7 +70,7 @@ def meetJoin(target_url):
         '//*[@id="yDmH0d"]/div[3]/div/div[2]/div[3]/div/span/span').click()
     time.sleep(1)
     driver.find_element_by_xpath(
-    '//*[@id="yDmH0d"]/c-wiz/div/div/div[9]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/div/div[1]/div[1]/span/span'
+        '//*[@id="yDmH0d"]/c-wiz/div/div/div[9]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/div/div[1]/div[1]/span/span'
     ).click()
 
 # If you have to login to the Google Account
@@ -83,26 +83,34 @@ def login():
         '//*[@id="password"]/div[1]/div/div[1]/input'
     ).send_keys(passwd + "\n")
 
+def timestamp():
+    print("[" + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S") + "] ", end="")
+
 # Execute
 #login()
 session_url = classroom(subject)
 meetJoin(session_url)
 
 # Timer
+if cnt > length:
+    cnt = length
 joined_time = time.time()
-min_time = time.time() - joined_time
-print("Joined at: " + str(datetime.datetime.now()))
+sec_time = time.time() - joined_time
+end_date = datetime.datetime.now() + datetime.timedelta(minutes=length)
+timestamp()
+print("Joined the class. End time will be " + end_date.strftime("%Y/%m/%d %H:%M:%S"))
 while True:
     time.sleep(1)
     ela_time = time.time() - joined_time
-    if ela_time > min_time + 60:
-        print('{:.0f}'.format(ela_time) + " min passed")
+    if ela_time > sec_time + 60:
+        min = ela_time / 60
+        timestamp()
+        print('{:.0f}'.format(min) + " min passed, " + str(round(length - min)) + " min to quit")
         sec_time = ela_time
-    if ela_time > (length - cnt) * 60:
-        print(str(cnt) + " min to quit")
-        cnt -= 1
     if ela_time > length * 60:
+        timestamp()
         print(str(length) + " min timer reached")
+        timestamp()
         print("Quitting process...")
         driver.find_element_by_xpath(
             '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[9]/div[2]/div[2]/div'

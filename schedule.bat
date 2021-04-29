@@ -1,1 +1,1 @@
-python3 .\open.py
+python .\open.py
