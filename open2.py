@@ -95,6 +95,7 @@ def login():
     ).send_keys(passwd + "\n")
 
 
+# Send a message with timestamp
 def sysmessage(text_message=""):
     print("[" + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S") + "] ", end="")
     if text_message != "":
@@ -110,12 +111,6 @@ meetJoin(session_url)
 # Timer
 joined_time = time.time()
 sec_time = time.time() - joined_time
-
-time.sleep(2)
-people = driver.find_element_by_xpath(
-    '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[1]/div[3]/div/div[2]/div[1]/span/span/div/div/span[2]'
-).text
-print(people + "nin test")
 
 while True:
     time.sleep(1)
