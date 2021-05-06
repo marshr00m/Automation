@@ -26,7 +26,8 @@ subject = sys.argv[1]
 # Class session length (minute)
 length = 92
 
-# If Meet people number is 1, count will decrease 1 by a minute.
+# If Meet people number is below [ exit_threshold ], count will decrease 1 by a minute.
+exit_threshold = 3
 count_to_exit = 10
 
 # People number detection and system message interval (seconds)
@@ -34,7 +35,6 @@ message_interval = 60
 
 # Logfile location
 logfileDir = './logs/'
-
 
 # Google login page URL
 login_url = "https://accounts.google.com/signin/v2/identifier?hl=ja&passive=true&continue=https%3A%2F%2Fwww.google" \
@@ -63,9 +63,11 @@ opt.add_experimental_option("prefs", {
 ########################################################################
 ########################################################################
 
-# Create directory if not exists
+
+# Create logfile directory if not exists
 if not os.path.exists(logfileDir):
     os.makedirs(logfileDir)
+
 
 # Logger
 logger = logging.getLogger('AutoMeetJoin')
@@ -136,7 +138,6 @@ meetJoin(session_url)
 # Timer
 joined_time = time.time()
 sec_time = time.time() - joined_time
-
 countFlag = count_to_exit
 
 while True:
@@ -150,7 +151,7 @@ while True:
         ).text
         logger.info('{:.0f}'.format(mins) + "/" + str(length) + " min passed. People count: " + person_count + ".")
         sec_time = ela_time
-        if int(person_count) > 3:
+        if int(person_count) > exit_threshold:
             pass
             if countFlag != count_to_exit:
                 countFlag = count_to_exit
