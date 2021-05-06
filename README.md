@@ -1,7 +1,7 @@
 # Automation
 
 Create a "config.py" file in same directory.
-You have to write 4 variables inside of the "config.py" file.
+You have to write 4 variables inside the "config.py" file.
 
 Example:
 
@@ -17,4 +17,4 @@ SUBJECT_NAME = "{ partial or full subject name }"
 
 ---
 
-To Run "schedule.bat" via double-click.
+To Run "python3 open.py {Subject Name}"

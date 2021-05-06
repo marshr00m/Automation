@@ -8,3 +8,5 @@
 /httpRequests/
 # User-Specific
 /logs/*
+/config.py
+/.idea/*
