@@ -152,9 +152,10 @@ while True:
         logger.info('{:.0f}'.format(mins) + "/" + str(length) + " min passed. People count: " + person_count + ".")
         sec_time = ela_time
         if int(person_count) > exit_threshold:
-            pass
             if countFlag != count_to_exit:
                 countFlag = count_to_exit
+            pass
+
         else:
             count_to_exit -= 1
             logger.warning("No Meet activities. Exit in " + str(count_to_exit + 1) + ".")
