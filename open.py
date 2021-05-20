@@ -27,12 +27,12 @@ subject = sys.argv[1]
 # Class session length (minute)
 length = 92
 
-# If Meet people number is below [ exit_threshold ], count will decrease 1 by a minute.
+# If Meet people number is below [ exit_threshold ], [ count_to_exit ] will decrease 1 by a [ message_interval ].
 exit_threshold = 14
 count_to_exit = 2
 
 # People number detection and system message interval (seconds)
-message_interval = 60
+message_interval = 30
 
 # Logfile location
 logfileDir = './logs/'
