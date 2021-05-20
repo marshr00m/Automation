@@ -3,6 +3,7 @@ import logging
 import sys
 import time
 import os
+import re
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -27,11 +28,11 @@ subject = sys.argv[1]
 length = 92
 
 # If Meet people number is below [ exit_threshold ], count will decrease 1 by a minute.
-exit_threshold = 3
-count_to_exit = 10
+exit_threshold = 14
+count_to_exit = 3
 
 # People number detection and system message interval (seconds)
-message_interval = 60
+message_interval = 10
 
 # Logfile location
 logfileDir = './logs/'
@@ -90,14 +91,16 @@ driver.implicitly_wait(30)
 
 # Move to objective website
 def classroom(sub):
+    url_pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
     logger.info("Opening Google Classroom...")
     driver.get(url)
     logger.info("Searching the classrooms for [ " + sub + " ]...")
     driver.find_element_by_partial_link_text(sub).click()
     logger.info(
         "Found a classroom named [ " + driver.find_element_by_partial_link_text(sub).text.replace("\n", " ") + " ].")
-
     meet_url = driver.find_element_by_partial_link_text("meet.google.com").text
+    meet_url = re.findall(url_pattern, meet_url)
+    meet_url = "".join(meet_url)
     logger.info("Target Google Meet URL: " + meet_url)
     return meet_url
 
@@ -115,7 +118,7 @@ def meetJoin(target_url):
         '//*[@id="yDmH0d"]/c-wiz/div/div/div[9]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/div/div[1]/div['
         '1]/span/span'
     ).click()
-    end_date = datetime.datetime.now() + datetime.timedelta(minutes=length)
+    end_date = datetime.datetime.now() + datetime.timedelta(minutes = length)
     logger.info("Joined the class. End time will be " + end_date.strftime("%Y/%m/%d %H:%M:%S"))
 
 
@@ -149,16 +152,22 @@ while True:
         person_count = driver.find_element_by_xpath(
             '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[1]/div[3]/div/div[2]/div[1]/span/span/div/div/span[2]'
         ).text
+        if person_count.isdecimal() is False:
+            person_count = driver.find_element_by_xpath(
+                '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[4]/div/div[2]/div[2]/div[1]/div[1]/span/div/span'
+            ).text
+        person_count = re.sub(r"\D", "", person_count)
+
         logger.info('{:.0f}'.format(mins) + "/" + str(length) + " min passed. People count: " + person_count + ".")
         sec_time = ela_time
-        if int(person_count) > exit_threshold:
-            if countFlag != count_to_exit:
-                countFlag = count_to_exit
-            pass
-
-        else:
-            count_to_exit -= 1
-            logger.warning("No Meet activities. Exit in " + str(count_to_exit + 1) + ".")
+        if person_count.isdecimal() is True:
+            if int(person_count) > exit_threshold:
+                if countFlag != count_to_exit:
+                    countFlag = count_to_exit
+                pass
+            else:
+                count_to_exit -= 1
+                logger.warning("No Meet activities. Exit in " + str(count_to_exit + 1) + ".")
 
     if count_to_exit == 0:
         logger.info("Quitting process...")
