@@ -29,10 +29,10 @@ length = 92
 
 # If Meet people number is below [ exit_threshold ], count will decrease 1 by a minute.
 exit_threshold = 14
-count_to_exit = 3
+count_to_exit = 2
 
 # People number detection and system message interval (seconds)
-message_interval = 10
+message_interval = 60
 
 # Logfile location
 logfileDir = './logs/'
