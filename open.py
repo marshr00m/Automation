@@ -177,9 +177,6 @@ while True:
     if ela_time > length * 60:
         logger.info(str(length) + " min timer reached")
         logger.info("Quitting process...")
-        driver.find_element_by_xpath(
-            '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[9]/div[2]/div[2]/div'
-        ).click()
-        time.sleep(3)
+        time.sleep(1)
         driver.quit()
         break
