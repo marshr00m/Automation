@@ -137,7 +137,7 @@ def quit_meet():
             By.XPATH,
             '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[2]/div/div[7]/span/button'
         ).click()
-        time.sleep(2)
+        time.sleep(3)
     finally:
         driver.quit()
 
@@ -198,33 +198,36 @@ while True:
     time.sleep(1)
     ela_time = time.time() - joined_time
 
-    try:
-        if ela_time > sec_time + message_interval:
-            mins = ela_time / 60
+
+    if ela_time > sec_time + message_interval:
+        mins = ela_time / 60
+        try:
             person_count = driver.find_element(
                 By.XPATH,
                 '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[3]/div[3]/div/div/div[2]/div/div'
             ).text
+        except:
+            restart_script()
         if person_count.isdecimal() is False:
-            person_count = driver.find_element(
-                By.XPATH,
-                '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[3]/div[3]/div/div/div[2]/div/div'
-            ).text
-    except:
-        restart_script()
+            try:
+                person_count = driver.find_element(
+                    By.XPATH,
+                    '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[3]/div[3]/div/div/div[2]/div/div'
+                ).text
+            except:
+                restart_script()
+            person_count = re.sub(r"\D", "", person_count)
 
-    person_count = re.sub(r"\D", "", person_count)
-
-    logger.info('{:.0f}'.format(mins) + "/" + str(length) + " min passed. People count: " + person_count + ".")
-    sec_time = ela_time
-    if person_count.isdecimal() is True:
-        if int(person_count) > exit_threshold:
-            if count_flag != count_to_exit:
-                count_flag = count_to_exit
-            pass
-        else:
-            count_to_exit -= 1
-            logger.warning("No Meet activities. Exit in " + str(count_to_exit + 1) + ".")
+        logger.info('{:.0f}'.format(mins) + "/" + str(length) + " min passed. People count: " + person_count + ".")
+        sec_time = ela_time
+        if person_count.isdecimal() is True:
+            if int(person_count) > exit_threshold:
+                if count_flag != count_to_exit:
+                    count_flag = count_to_exit
+                pass
+            else:
+                count_to_exit -= 1
+                logger.warning("No Meet activities. Exit in " + str(count_to_exit + 1) + ".")
 
     if count_to_exit == 0:
         quit_meet()
