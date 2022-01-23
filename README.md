@@ -1,20 +1,25 @@
 # Automation
 
-Create a "config.py" file in same directory.
-You have to write 4 variables inside the "config.py" file.
+This is a tool that automatically joins Google Meet.
 
-Example:
 
----
+## 1. Dependency
 
-EMAIL_ADDRESS = "{ your email address }"
+You need to install these packages.
 
-PASSWORD = "{ your account password }"
+Command:
+```
+pip install datetime logging sys time os re selenium
+```
 
-URL = "{ classroom address }"
 
-SUBJECT_NAME = "{ partial or full subject name }"
+## 2. Setup
 
----
+1. Execute: `python open.py login`
+2. Please log in to the newly opened chrome with the account you want to use in classroom.
+3. After logging in, close Chrome window.
 
-To Run "python3 open.py {Subject Name}"
+
+## 3. Run
+
+Execute: `python open.py {Subject Name}`

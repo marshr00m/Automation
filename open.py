@@ -10,14 +10,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-import config
-
-# Import arguments from config.py file
-email = config.EMAIL_ADDRESS
-passwd = config.PASSWORD
-url = config.URL
-# subject = config.SUBJECT_NAME
-
 # Import arguments from argv
 subject = sys.argv[1]
 
@@ -45,6 +37,9 @@ logfileDir = './logs/'
 # Google login page URL
 login_url = "https://accounts.google.com/signin/v2/identifier?hl=ja&passive=true&continue=https%3A%2F%2Fwww.google" \
             ".com%2F%3Fhl%3Dja&ec=GAZAmgQ&flowName=GlifWebSignIn&flowEntry=ServiceLogin "
+
+# Google Classroom URL
+url = "https://classroom.google.com/u/0/h"
 
 # Chrome configurations
 # 1 - Profile
@@ -117,7 +112,7 @@ def meet_join():
     logger.info("Current page: " + driver.current_url)
     time.sleep(2)
     try:
-        # 右が使用不可のため生のXPATHで取得 driver.find_element(By.XPATH, "//span[contains(text(), '閉じる')]").click()
+        # Close popup window by raw XPATH.
         driver.find_element(By.XPATH, '//*[@id="yDmH0d"]/div[3]/div/div[2]/div[3]/div/span/span').click()
     finally:
         time.sleep(2)
@@ -150,17 +145,18 @@ def restart_script():
     sys.exit()
 
 
-# If you have to log in to the Google Account
-def login():
+# First setup
+if sys.argv[1] == "login":
+    logger.info("Opening Google log in Page...")
     driver.get(login_url)
-    driver.find_element(
-        By.XPATH,
-        '//*[@id="identifierId"]'
-    ).send_keys(email + "\n")
-    driver.find_element(
-        By.XPATH,
-        '//*[@id="password"]/div[1]/div/div[1]/input'
-    ).send_keys(passwd + "\n")
+    logger.info("Current page: " + driver.current_url)
+    logger.info("Please log in as classroom user.")
+    logger.info("After logging in, close chrome and restart the script with 'python open.py [SUBJECT NAME]' command.")
+    logger.info("Chrome will be closed automatically in 3 minute.")
+    time.sleep(180)
+    logger.info("Closing Google Chrome...")
+    driver.quit()
+    sys.exit()
 
 
 # Execute
@@ -169,7 +165,7 @@ for i in range(attempt_num):
         open_class(subject)
         break
     except:
-        logger.warning("Exception occurred while opening classroom page. Retrying... (attempt {})".format(i + 1))
+        logger.warning("Exception occurred while opening classroom page. Retrying... (attempt {}/{})".format(i + 1, attempt_num))
         if i == attempt_num - 1:
             logger.warning("Classroom search failed. Closing Chrome App.")
             driver.quit()
@@ -180,14 +176,13 @@ for i in range(attempt_num):
         meet_join()
         break
     except:
-        logger.warning("Exception occurred while Joining meet session. Retrying... (attempt {})".format(i + 1))
+        logger.warning("Exception occurred while Joining meet session. Retrying... (attempt {}/{})".format(i + 1, attempt_num))
         driver.switch_to.window(driver.window_handles[0])
         driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.PAGE_DOWN)
         if i == attempt_num - 1:
             logger.warning("Meet join failed. Closing Chrome App.")
             driver.quit()
             sys.exit()
-
 
 # Timer
 joined_time = time.time()
@@ -197,7 +192,6 @@ count_flag = count_to_exit
 while True:
     time.sleep(1)
     ela_time = time.time() - joined_time
-
 
     if ela_time > sec_time + message_interval:
         mins = ela_time / 60
