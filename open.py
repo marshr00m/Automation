@@ -106,7 +106,7 @@ def meet_join():
         logger.info("Opened a meet page by 'Join' button.")
     except:
         driver.find_element(By.PARTIAL_LINK_TEXT, "meet.google.com").click()
-        logger.warning("Couldn't find the 'Join' button. Opened the page from another URL. The URL may be wrong.")
+        logger.warning("Couldn't find the 'Join' button. Opened the page from another feed. The URL may be wrong.")
     # Move to the rightmost tab
     driver.switch_to.window(driver.window_handles[-1])
     logger.info("Current page: " + driver.current_url)
@@ -138,7 +138,7 @@ def quit_meet():
 
 
 def restart_script():
-    logger.info("Some error has occurred. Automatically restarting script.")
+    logger.warning("Some error has occurred. Automatically restarting script.")
     driver.quit()
     time.sleep(5)
     os.system("python open.py " + sys.argv[1])
