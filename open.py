@@ -104,9 +104,16 @@ def meet_join():
     try:
         driver.find_element(By.XPATH, '//a[@aria-label="参加"]').click()
         logger.info("Opened a meet page by 'Join' button.")
-    except:
-        driver.find_element(By.PARTIAL_LINK_TEXT, "meet.google.com").click()
-        logger.warning("Couldn't find the 'Join' button. Opened the page from another feed. The URL may be wrong.")
+    except Exception as error_text:
+        logger.warning(error_text)
+        try:
+            driver.find_element(By.PARTIAL_LINK_TEXT, "meet.google.com").click()
+            logger.warning("Couldn't find the 'Join' button. Opened the page from another feed. The URL may be wrong.")
+        except Exception as error_text:
+            logger.warning(error_text)
+            driver.find_element(By.PARTIAL_LINK_TEXT, "会議").click()
+            logger.warning("Couldn't find the 'Join' button. Opened the page from another feed. The URL may be wrong.")
+
     # Move to the rightmost tab
     driver.switch_to.window(driver.window_handles[-1])
     logger.info("Current page: " + driver.current_url)
@@ -114,10 +121,17 @@ def meet_join():
     try:
         # Close popup window by raw XPATH.
         driver.find_element(By.XPATH, '//*[@id="yDmH0d"]/div[3]/div/div[2]/div[3]/div/span/span').click()
-    finally:
-        time.sleep(2)
+    except Exception as error_text:
+        logger.warning(error_text)
+        pass
+    time.sleep(2)
+    try:
         driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
         driver.find_element(By.XPATH, "//span[contains(text(), '参加')]").click()
+    except Exception as error_text:
+        logger.warning(error_text)
+        restart_script()
+
     time.sleep(1)
     end_date = datetime.datetime.now() + datetime.timedelta(minutes=length)
     logger.info("Joined the class. End time will be " + end_date.strftime("%Y/%m/%d %H:%M:%S"))
@@ -164,7 +178,8 @@ for i in range(attempt_num):
     try:
         open_class(subject)
         break
-    except:
+    except Exception as e:
+        logger.warning("Error: " + e)
         logger.warning("Exception occurred while opening classroom page. Retrying... (attempt {}/{})".format(i + 1, attempt_num))
         if i == attempt_num - 1:
             logger.warning("Classroom search failed. Closing Chrome App.")
@@ -175,7 +190,8 @@ for i in range(attempt_num):
     try:
         meet_join()
         break
-    except:
+    except Exception as error_text:
+        logger.warning(error_text)
         logger.warning("Exception occurred while Joining meet session. Retrying... (attempt {}/{})".format(i + 1, attempt_num))
         driver.switch_to.window(driver.window_handles[0])
         driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.PAGE_DOWN)
@@ -208,7 +224,8 @@ while True:
                     By.XPATH,
                     '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[3]/div[3]/div/div/div[2]/div/div'
                 ).text
-            except:
+            except Exception as error_text:
+                logger.warning(error_text)
                 restart_script()
             person_count = re.sub(r"\D", "", person_count)
 
