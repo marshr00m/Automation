@@ -178,8 +178,8 @@ for i in range(attempt_num):
     try:
         open_class(subject)
         break
-    except Exception as e:
-        logger.warning("Error: " + e)
+    except Exception as error_text:
+        logger.warning(error_text)
         logger.warning("Exception occurred while opening classroom page. Retrying... (attempt {}/{})".format(i + 1, attempt_num))
         if i == attempt_num - 1:
             logger.warning("Classroom search failed. Closing Chrome App.")
