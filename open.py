@@ -25,7 +25,7 @@ length = 95
 
 # If Meet people number is below [ exit_threshold ],
 # [ count_to_exit ] will decrement by 1 in every [ message_interval ] seconds.
-exit_threshold = 14
+exit_threshold = 12
 count_to_exit = 2
 
 # People number detection and system message interval (seconds)
